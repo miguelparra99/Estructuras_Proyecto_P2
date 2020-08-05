@@ -1,5 +1,6 @@
 package Tree;
 
+import Apoyo.HuffmanInfo;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EmptyStackException;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
@@ -155,7 +157,7 @@ public class BinaryTree<T> {
             if (this.root.getLeft() != null) {
                 this.root.getLeft().inOrderRecursive();
             }
-            System.out.println(this.root.getContent());
+            System.out.println(this.root.getContent().toString());
             if (this.root.getRight() != null) {
                 this.root.getRight().inOrderRecursive();
 
@@ -315,8 +317,6 @@ public class BinaryTree<T> {
     }
 
     /////////////////////////DEBER/////////////////////////////
-    
-    
     /////MINIMO RECURSIVO E ITERATIVO//////////////
     public PriorityQueue<Integer> AyudaMinRecursive() {
         PriorityQueue<Integer> ColaNumeros = new PriorityQueue<>();
@@ -789,7 +789,7 @@ public class BinaryTree<T> {
                 }
             }
         }
-      return 0;
+        return 0;
     }
 
     public void isHeightBalancedIterativo(BinaryTree<T> nodo) {
@@ -800,4 +800,26 @@ public class BinaryTree<T> {
         }
     }
 
+    public String CodificarArbol(BinaryTree<HuffmanInfo> arbol, String caracter) {
+        String codificacion="";
+
+        if (arbol.getLeft() != null && arbol.getLeft().getRoot().getContent().getText().indexOf(caracter) != -1) {
+            codificacion="1"+CodificarArbol(arbol.getLeft(),caracter);
+        }
+
+        if (arbol.getRight() != null && arbol.getRight().getRoot().getContent().getText().indexOf(caracter) != -1) {
+            codificacion="0"+CodificarArbol(arbol.getRight(),caracter);
+        }
+        return codificacion;
+    }
+
+    public Hashtable<String,HuffmanInfo> CodificarArbolTodos(Map<String,Integer> mapCaracter) {
+        Hashtable<String,HuffmanInfo> mapacodificado=new Hashtable<>();
+        mapCaracter.forEach((k,v) ->{ 
+          
+          String codificacion =CodificarArbol((BinaryTree<HuffmanInfo>) this,k);
+          mapacodificado.put(k, new HuffmanInfo(k,v,Long.parseLong(codificacion)));
+      });
+        return mapacodificado;
+    }
 }
