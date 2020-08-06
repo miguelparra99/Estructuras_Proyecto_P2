@@ -800,6 +800,12 @@ public class BinaryTree<T> {
         }
     }
 
+    
+    
+    //EL METODO CODIFICARARBOL, RECIBE UN CARACTER Y UN ARBOL
+    //EL METODO ME DEVUELVE LA REPRESENTACION EN BITS DEL CARACTER SEGUN EL ARBOL QUE MANDAMOS
+    //SI EL CARACTER NO EXITE EN EL ARBOL DEVUELVE VACIO
+    //EJ: meto caracter a, si exite en el arbol. me devolvera algo asi 110 en caso de que no exista me devuelve "" 
     public String CodificarArbol(BinaryTree<HuffmanInfo> arbol, String caracter) {
         String codificacion="";
 
@@ -813,6 +819,8 @@ public class BinaryTree<T> {
         return codificacion;
     }
 
+    //ESTE METODO REVICE UN MAPA DE CLAVE STRING(CARACTER) Y VALOR INTEGER(FRECUENCIA)
+    //ME DEVULVE UN MAPA LLENO CON CLAVE STRING(CARACTER) Y VALOR HUFFMAINFO(CARACTER,FRECUENCIA Y BITS)
     public Hashtable<String,HuffmanInfo> CodificarArbolTodos(Map<String,Integer> mapCaracter) {
         Hashtable<String,HuffmanInfo> mapacodificado=new Hashtable<>();
         mapCaracter.forEach((k,v) ->{ 

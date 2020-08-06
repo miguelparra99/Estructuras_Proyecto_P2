@@ -112,6 +112,8 @@ public class ElegirArchivo extends VBox {
         
         });
     }
+   
+    //ESTE METODO ME LLENA UN GRINDPANE CON EL CARACTER Y SU BITS SEGUN EL ARBOL DE BITS GENERADO
     public GridPane TablaCodigos(){
         GridPane tabla = new GridPane();
        tabla.setAlignment(Pos.CENTER);
@@ -130,7 +132,7 @@ public class ElegirArchivo extends VBox {
        return tabla;
     
     }
-  
+  //ME DEVULVE EL TEXTO QUE EXISTIA DENTRO DE UN ARCHIVO
     public String ContenidoTxt(String ruta) {
         String texto = " ";
         String linea = " ";
@@ -147,7 +149,7 @@ public class ElegirArchivo extends VBox {
         }
         return texto;
     }
-
+//RECIBE UN TEXTO Y LE SACA LA FRECUENCIA Y LOS UBICA EN EL GRINDPANE CARACTER:FRECUENCIA
     public GridPane Frecuencias(String texto) {
         GridPane tabla = new GridPane();
         tabla.setMinSize(5, 5);
@@ -177,30 +179,9 @@ public class ElegirArchivo extends VBox {
        
         return tabla;
     }
-
-    public GridPane Codificacion() {
-        GridPane tabla = new GridPane();
-        Hashtable<String, HuffmanInfo> mapOfAll = ArbolHuffman.CodificarArbolTodos(map);
-
-//        int j = 0;
-//        for (String key : mapOfAll.keySet()) {
-//            Label clave2 = new Label(key);
-//            Label valor = new Label(mapOfAll.get(key).getBit());
-//            tabla.add((Node) clave2, 0, j);
-//            tabla.add((Node) valor, 1, j);
-//            ++j;
-//        }
-//        for (int k = 0; k < this.map.keySet().size(); ++k) {
-//            final ColumnConstraints column = new ColumnConstraints(25.0);
-//            tabla.getColumnConstraints().add(column);
-//        }
-//        for (int k = 0; k < this.map.keySet().size(); ++k) {
-//            final RowConstraints row = new RowConstraints(25.0);
-//            tabla.getRowConstraints().add(row);
-//        }
-        return tabla;
-    }
-
+    
+ //ESTE METODO ME GENERA UN ARCHIVO DE TEXTO(BITS) Y LOS GUARDA DONDE LA PERSONA DESEA   
+ //  RECIBE LA RUTA DONDE SE GUARDARA EL ARCHIVO Y EL CONTENIDO QUE TENDRA ESTE
     public void escribir(String ruta, String contenido) {
         try {
             final File file = new File(ruta + "/Codificado.txt");
@@ -216,7 +197,8 @@ public class ElegirArchivo extends VBox {
             System.out.println("archivo no creado");
         }
     }
-
+ //METODO DE APOYO QUE RECORRE EL MAPA DE FRECUENCIAS PARA UTILIZARLOS COMO NODOS EN UN BINARY TREE 
+ //Y EL BINARYTREE SE LO GUARDA EN UNA COLA DE PRIORIDAD QUE LO ORDENA DE MENO A MAYOR FRECUENCIA.
     public void LlenarCola() {
         ColaPrioridad = new PriorityQueue<>((b1, b2) -> {
             return b1.getRoot().getContent().getFrecuencia() - b2.getRoot().getContent().getFrecuencia();
@@ -225,7 +207,7 @@ public class ElegirArchivo extends VBox {
             ColaPrioridad.add((new BinaryTree(new HuffmanInfo(k, v))));
         });
     }
-
+    //LLENAMOS EL ARBOL ArbolHuffman
     public void LlenarArbol() {
         while (!ColaPrioridad.isEmpty()) {
             if (ColaPrioridad.size() >= 2) {
@@ -243,6 +225,7 @@ public class ElegirArchivo extends VBox {
         }
     }
 
+    //RECIBE UN TEXTO Y ME DEVUELVE UNA CADENA DE BITS 
     public String codificarArchivo(String texto) {
 
         String codificado = "";
@@ -253,6 +236,7 @@ public class ElegirArchivo extends VBox {
         return codificado;
     }
 
+  
     public String descodificarbits(String bits){
         String decodificado="";
         return decodificado;
