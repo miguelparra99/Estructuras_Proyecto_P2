@@ -8,12 +8,12 @@ public class HuffmanInfo
 {
     private String text;
     private int frecuencia;
-    private Long bit;
+    private String bit;
     
     public HuffmanInfo() {
     }
     
-    public HuffmanInfo(final String text, final int frecuencia, final Long bit) {
+    public HuffmanInfo(final String text, final int frecuencia, final String bit) {
         this.text = text;
         this.frecuencia = frecuencia;
         this.bit = bit;
@@ -40,11 +40,11 @@ public class HuffmanInfo
         this.frecuencia = frecuencia;
     }
     
-    public Long getBit() {
+    public String getBit() {
         return this.bit;
     }
     
-    public void setBit(final Long bit) {
+    public void setBit(final String bit) {
         this.bit = bit;
     }
 

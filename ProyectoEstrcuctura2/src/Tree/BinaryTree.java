@@ -818,7 +818,7 @@ public class BinaryTree<T> {
         mapCaracter.forEach((k,v) ->{ 
           
           String codificacion =CodificarArbol((BinaryTree<HuffmanInfo>) this,k);
-          mapacodificado.put(k, new HuffmanInfo(k,v,Long.parseLong(codificacion)));
+          mapacodificado.put(k, new HuffmanInfo(k,v,codificacion));
       });
         return mapacodificado;
     }

@@ -13,7 +13,7 @@ public class ProyectoParcial2 extends Application
 {
     public void start(final Stage primaryStage) {
         final ElegirArchivo Ventana = new ElegirArchivo();
-        final Scene scene = new Scene((Parent)Ventana, 500.0, 400.0);
+        final Scene scene = new Scene(Ventana, 600, 600);
         primaryStage.setTitle("Inicio");
         primaryStage.setScene(scene);
         primaryStage.show();
