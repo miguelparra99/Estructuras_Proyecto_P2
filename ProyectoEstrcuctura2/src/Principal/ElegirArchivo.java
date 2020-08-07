@@ -136,7 +136,8 @@ public class ElegirArchivo extends VBox {
             escribirArchivoBinario(this.Ruta1.getText(), codificarArchivo(ContenidoTxt(Ruta.getText())));
             String source=Ruta.getText().replace('\\','/');
             String[] Archivo=source.split("/");
-            DictHistorial.put(Archivo[Archivo.length-1],new Historial(new Date(),source,Ruta1.getText(),cb.getSelectionModel().getSelectedItem().toString(),mapOfAll,TablaFrecuencia,TablaCodigos));
+                 String source1=Ruta1.getText().replace('\\','/');
+            DictHistorial.put(Archivo[Archivo.length-1],new Historial(new Date(),source,source1,cb.getSelectionModel().getSelectedItem().toString(),mapOfAll,TablaFrecuencia,TablaCodigos));
             System.out.println("agregado con exito");
         });
 

@@ -72,8 +72,10 @@ public class ViewHistorial extends VBox {
             General.setCenter(Nodo);
             Label RutaOrigen = new Label("La ruta Origen es : "+Hist.getRutaOrigen());
             Label RutaDestino = new Label("La ruta Destino es : "+Hist.getRutaDestino());
+            Label Manera=new Label("Se codidico de manera : "+Hist.getManera());
             Label Fecha = new Label("La hora de guardado es : "+Hist.getFehca());
-            this.getChildren().addAll(RutaOrigen,RutaDestino,Fecha,General);
+            
+            this.getChildren().addAll(RutaOrigen,RutaDestino,Manera,Fecha,General);
         });
         BttnOtroArchivo.setOnAction(evente->{
         this.getChildren().clear();
