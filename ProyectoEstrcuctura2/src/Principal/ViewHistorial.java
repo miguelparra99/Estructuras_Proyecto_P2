@@ -34,6 +34,7 @@ public class ViewHistorial extends VBox {
     private BorderPane General;
     private TextField TxtDeCodificarPalabra;
     private TextField TxtCodificarPalabra;
+    private  Historial Hist;
 
     private ChoiceBox cb;
 
@@ -63,7 +64,7 @@ public class ViewHistorial extends VBox {
         cb.setItems(A);
         this.getChildren().addAll(Descripcion, cb,BttnMostrarInfo);
         BttnMostrarInfo.setOnAction(event -> {
-            Historial Hist=DictHistorial.get(cb.getSelectionModel().getSelectedItem().toString());
+            Hist=DictHistorial.get(cb.getSelectionModel().getSelectedItem().toString());
             General.setLeft(Hist.getViewCodificacion());
             General.setTop(Hist.getViewFrecuencia());
             General.setBottom(BttnOtroArchivo);
@@ -81,6 +82,10 @@ public class ViewHistorial extends VBox {
         this.getChildren().clear();
         Llenar();
         }); 
+        BttnCodificarPalabra.setOnAction(event->{
+        ElegirArchivo Token=new ElegirArchivo("dda");
+        General.setRight(new Label(Token.codificarArchivo((Hashtable<String, HuffmanInfo>) Hist.getMapaCodificar(),TxtCodificarPalabra.getText())));
+        });
         
 
     }

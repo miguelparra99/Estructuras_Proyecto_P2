@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Hashtable;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -70,7 +71,9 @@ public class ElegirArchivo extends VBox {
         DictHistorial=new Hashtable<>();
         this.Llenar();
     }
-    
+    public ElegirArchivo(String a){
+        
+    }
     public void Llenar() {
         
         this.setAlignment(Pos.CENTER);
@@ -132,8 +135,10 @@ public class ElegirArchivo extends VBox {
 
         BttnCodificar.setOnAction(event -> {
             System.out.println("click");
-            escribir(this.Ruta1.getText(), codificarArchivo(ContenidoTxt(Ruta.getText())));
-            escribirArchivoBinario(this.Ruta1.getText(), codificarArchivo(ContenidoTxt(Ruta.getText())));
+            String RUTADESTINO=this.Ruta1.getText();
+            String Bits= codificarArchivo(mapOfAll,ContenidoTxt(Ruta.getText()));
+            escribir(RUTADESTINO,Bits);
+            escribirArchivoBinario(RUTADESTINO, Bits);
             String source=Ruta.getText().replace('\\','/');
             String[] Archivo=source.split("/");
                  String source1=Ruta1.getText().replace('\\','/');
@@ -142,7 +147,7 @@ public class ElegirArchivo extends VBox {
         });
 
         BttnCodePalabra.setOnAction(event -> {
-            Label derecha = new Label(codificarArchivo(txtPalabra.getText()));
+            Label derecha = new Label(codificarArchivo(mapOfAll,txtPalabra.getText()));
             codifica.setRight(derecha);
         });
         BttnDecodificarPalabra.setOnAction(event -> {});
@@ -288,12 +293,12 @@ public class ElegirArchivo extends VBox {
     }
 
     //RECIBE UN TEXTO Y ME DEVUELVE UNA CADENA DE BITS 
-    public String codificarArchivo(String texto) {
+    public String codificarArchivo(Hashtable<String,HuffmanInfo> mapa,String texto) {
 
         String codificado = "";
         char[] arrayTexto = texto.toCharArray();
         for (int i = 0; i < arrayTexto.length; ++i) {
-            codificado += mapOfAll.get(Character.toString(arrayTexto[i])).getBit();
+            codificado += mapa.get(Character.toString(arrayTexto[i])).getBit();
         }
         return codificado;
     }
