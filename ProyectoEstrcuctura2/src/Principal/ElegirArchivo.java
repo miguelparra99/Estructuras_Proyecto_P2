@@ -25,11 +25,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -53,7 +58,7 @@ public class ElegirArchivo extends VBox {
     private Button BttnDecodificarPalabra;
     private Button BttnHistorial;
     private Button BttnVolverCargar;
-    private Hashtable<String,Historial> DictHistorial;
+    private Hashtable<String, Historial> DictHistorial;
     private TextField Ruta;
     private TextField txtPalabra;
     private TextField txtBits;
@@ -64,18 +69,21 @@ public class ElegirArchivo extends VBox {
     private PriorityQueue<BinaryTree<HuffmanInfo>> ColaPrioridad;
     private BinaryTree<HuffmanInfo> ArbolHuffman;
     private Hashtable<String, HuffmanInfo> mapOfAll;
+    private Hashtable<String, ArrayList<String>> mapParentChild;
     private BorderPane codifica;
     private ChoiceBox cb;
 
     public ElegirArchivo() {
-        DictHistorial=new Hashtable<>();
+        DictHistorial = new Hashtable<>();
         this.Llenar();
     }
-    public ElegirArchivo(String a){
-        
+
+    public ElegirArchivo(String a) {
+
     }
+
     public void Llenar() {
-        
+
         this.setAlignment(Pos.CENTER);
         this.BttnArchivo = new Button("Buscar Archivo");
         this.BttnFrecuencia = new Button("frecuencia");
@@ -83,8 +91,8 @@ public class ElegirArchivo extends VBox {
         this.BttnCode = new Button("Generar codificacion");
         this.BttnCodePalabra = new Button("Codifica la palabra");
         this.BttnDecodificarPalabra = new Button("Decodificar");
-        this.BttnHistorial=new Button("Ir al historial");
-        this.BttnVolverCargar=new Button("Cargar nuevo archio");
+        this.BttnHistorial = new Button("Ir al historial");
+        this.BttnVolverCargar = new Button("Cargar nuevo archio");
         cb = new ChoiceBox();
         cb.setTooltip(new Tooltip("Selecciona el tipo de codificacion"));
         cb.setItems(FXCollections.observableArrayList(
@@ -96,7 +104,7 @@ public class ElegirArchivo extends VBox {
         this.Ruta1 = new TextField();
         this.txtBits = new TextField();
         this.Ruta.setEditable(false);
-        this.getChildren().addAll(BttnArchivo, Ruta, cb , BttnFrecuencia);
+        this.getChildren().addAll(BttnArchivo, Ruta, cb, BttnFrecuencia);
         this.BttnArchivo.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Buscar archivo Txt");
@@ -111,7 +119,7 @@ public class ElegirArchivo extends VBox {
             }
         });
         BttnFrecuencia.setOnAction(event -> {
-            TablaFrecuencia=Frecuencias(ContenidoTxt(Ruta.getText()));
+            TablaFrecuencia = Frecuencias(ContenidoTxt(Ruta.getText()));
             getChildren().addAll(TablaFrecuencia, BttnCode);
             LlenarCola();
             LlenarArbol();
@@ -121,49 +129,51 @@ public class ElegirArchivo extends VBox {
         BttnCode.setOnAction(event -> {
             Label asunto = new Label("Ingrese la ruta donde guardara el .txt");
             codifica = new BorderPane();
-            TablaCodigos=TablaCodigos();
+            TablaCodigos = TablaCodigos();
             codifica.setLeft(TablaCodigos);
             VBox a = new VBox();
             a.getChildren().addAll(new Label("Ingresa letras del dominio y codificala!"), BttnCodePalabra, txtPalabra, new Label("Ingrese los bits del dominio y decodificala"), BttnDecodificarPalabra, txtBits);
             codifica.setCenter(a);
-            HBox b=new HBox();
+            HBox b = new HBox();
             b.setAlignment(Pos.CENTER);
-            b.getChildren().addAll(BttnHistorial,BttnCodificar,BttnVolverCargar);
+            b.getChildren().addAll(BttnHistorial, BttnCodificar, BttnVolverCargar);
             getChildren().addAll(codifica, asunto, Ruta1, b);
             BttnCode.setVisible(false);
         });
 
         BttnCodificar.setOnAction(event -> {
             System.out.println("click");
-            String RUTADESTINO=this.Ruta1.getText();
-            String Bits= codificarArchivo(mapOfAll,ContenidoTxt(Ruta.getText()));
-            escribir(RUTADESTINO,Bits);
+            String RUTADESTINO = this.Ruta1.getText();
+            String Bits = codificarArchivo(mapOfAll, ContenidoTxt(Ruta.getText()));
+            escribir(RUTADESTINO, Bits);
             escribirArchivoBinario(RUTADESTINO, Bits);
-            String source=Ruta.getText().replace('\\','/');
-            String[] Archivo=source.split("/");
-                 String source1=Ruta1.getText().replace('\\','/');
-            DictHistorial.put(Archivo[Archivo.length-1],new Historial(new Date(),source,source1,cb.getSelectionModel().getSelectedItem().toString(),mapOfAll,TablaFrecuencia,TablaCodigos));
+            escribirArchivoArbol(RUTADESTINO);
+            String source = Ruta.getText().replace('\\', '/');
+            String[] Archivo = source.split("/");
+            String source1 = Ruta1.getText().replace('\\', '/');
+            DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll, TablaFrecuencia, TablaCodigos));
             System.out.println("agregado con exito");
         });
 
         BttnCodePalabra.setOnAction(event -> {
-            Label derecha = new Label(codificarArchivo(mapOfAll,txtPalabra.getText()));
+            Label derecha = new Label(codificarArchivo(mapOfAll, txtPalabra.getText()));
             codifica.setRight(derecha);
         });
-        BttnDecodificarPalabra.setOnAction(event -> {});
-        
-        BttnVolverCargar.setOnAction(event->{
-        this.getChildren().clear();
-        Llenar();
+        BttnDecodificarPalabra.setOnAction(event -> {
         });
-        BttnHistorial.setOnAction(event->{
-            ViewHistorial Histo=new ViewHistorial(DictHistorial);
-           
+
+        BttnVolverCargar.setOnAction(event -> {
+            this.getChildren().clear();
+            Llenar();
+        });
+        BttnHistorial.setOnAction(event -> {
+            ViewHistorial Histo = new ViewHistorial(DictHistorial);
+
             Scene scene = new Scene(Histo, 600, 600);
-           Stage ad=new Stage();
-           ad.setScene(scene);
-           ad.show();
-        
+            Stage ad = new Stage();
+            ad.setScene(scene);
+            ad.show();
+
         });
     }
 
@@ -226,7 +236,7 @@ public class ElegirArchivo extends VBox {
             Label valor = new Label(map.get(key).toString());
             tabla.add((Node) clave2, j, 0);
             tabla.add((Node) valor, j, 1);
-             ColumnConstraints column = new ColumnConstraints(20.0);
+            ColumnConstraints column = new ColumnConstraints(20.0);
             tabla.getColumnConstraints().add(column);
             ++j;
         }
@@ -238,12 +248,12 @@ public class ElegirArchivo extends VBox {
     //  RECIBE LA RUTA DONDE SE GUARDARA EL ARCHIVO Y EL CONTENIDO QUE TENDRA ESTE
     public void escribir(String ruta, String contenido) {
         try {
-            final File file = new File(ruta + "/Codificado.txt");
+            File file = new File(ruta + "/Codificado.txt");
             if (!file.exists()) {
                 file.createNewFile();
             }
-            final FileWriter fw = new FileWriter(file);
-            final BufferedWriter bw = new BufferedWriter(fw);
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(fw);
             bw.write(contenido);
             bw.close();
             System.out.println("archivo creado");
@@ -255,7 +265,7 @@ public class ElegirArchivo extends VBox {
     //Y EL BINARYTREE SE LO GUARDA EN UNA COLA DE PRIORIDAD QUE LO ORDENA DE MENO A MAYOR FRECUENCIA.
 
     public void LlenarCola() {
-       if (!cb.getSelectionModel().getSelectedItem().toString().equals("Mayor frecuencia + bits")) {
+        if (!cb.getSelectionModel().getSelectedItem().toString().equals("Mayor frecuencia + bits")) {
             ColaPrioridad = new PriorityQueue<>((b1, b2) -> {
                 return b1.getRoot().getContent().getFrecuencia() - b2.getRoot().getContent().getFrecuencia();
             });
@@ -269,31 +279,41 @@ public class ElegirArchivo extends VBox {
         });
     }
 
-    //LLENAMOS EL ARBOL ArbolHuffman
+    //Llena el ArbolHuffman y Llena un mapa relacion <Padre,hijo> como tiene varios hijos. se usa el ArrayList
     public void LlenarArbol() {
+        mapParentChild = new Hashtable<>();
         while (!ColaPrioridad.isEmpty()) {
-             BinaryTree<HuffmanInfo> arbol;
+            BinaryTree<HuffmanInfo> arbol;
             if (ColaPrioridad.size() >= 2) {
                 BinaryTree<HuffmanInfo> menorFrecuencia = ColaPrioridad.remove();
                 BinaryTree<HuffmanInfo> mayorFrecuencia = ColaPrioridad.remove();
                 String clave = mayorFrecuencia.getRoot().getContent().getText() + menorFrecuencia.getRoot().getContent().getText();
-                  if (!cb.getSelectionModel().getSelectedItem().toString().equals("Mayor frecuencia + bits")) {
-                     arbol = new BinaryTree(new HuffmanInfo(clave, 0));
+                if (!cb.getSelectionModel().getSelectedItem().toString().equals("Mayor frecuencia + bits")) {
+                    arbol = new BinaryTree(new HuffmanInfo(clave, 0));
                 } else {
-                     arbol = new BinaryTree(new HuffmanInfo(clave, mayorFrecuencia.getRoot().getContent().getFrecuencia() + menorFrecuencia.getRoot().getContent().getFrecuencia()));
+                    arbol = new BinaryTree(new HuffmanInfo(clave, mayorFrecuencia.getRoot().getContent().getFrecuencia() + menorFrecuencia.getRoot().getContent().getFrecuencia()));
 
                 }
+                ArrayList<String> arr = new ArrayList<>();
+                arr.add(menorFrecuencia.getRoot().getContent().getText());
+                arr.add(mayorFrecuencia.getRoot().getContent().getText());
+                mapParentChild.put(arbol.getRoot().getContent().getText(), arr);
                 arbol.setLeft(menorFrecuencia);
                 arbol.setRight(mayorFrecuencia);
                 ColaPrioridad.add(arbol);
             } else {
-                ArbolHuffman = ColaPrioridad.remove();
+                BinaryTree<HuffmanInfo> nodo = ColaPrioridad.remove();
+                ArbolHuffman = nodo;
+                ArrayList<String> arr = new ArrayList<>();
+                arr.add(nodo.getLeft().getRoot().getContent().getText());
+                arr.add(nodo.getRight().getRoot().getContent().getText());
+                mapParentChild.put(nodo.getRoot().getContent().getText(), arr);
             }
         }
     }
 
     //RECIBE UN TEXTO Y ME DEVUELVE UNA CADENA DE BITS 
-    public String codificarArchivo(Hashtable<String,HuffmanInfo> mapa,String texto) {
+    public String codificarArchivo(Hashtable<String, HuffmanInfo> mapa, String texto) {
 
         String codificado = "";
         char[] arrayTexto = texto.toCharArray();
@@ -307,16 +327,43 @@ public class ElegirArchivo extends VBox {
         String decodificado = "";
         return decodificado;
     }
-    
-    public void escribirArchivoBinario(String ruta,String code){
+
+    public void escribirArchivoBinario(String ruta, String code) {
         try {
-            File file = new File( ruta +"/CodificadoBianrio1.dat");
-            OutputStream ar=new FileOutputStream(file);
-            DataOutputStream b=new DataOutputStream(ar);
+            File file = new File(ruta + "/CodificadoBianrio1.dat");
+            OutputStream ar = new FileOutputStream(file);
+            DataOutputStream b = new DataOutputStream(ar);
             b.write(code.getBytes());
         } catch (FileNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());        }
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public void escribirArchivoArbol(String ruta) {
+        try {
+            File file = new File(ruta + "/Arbol.tree");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(fw);
+            mapParentChild.forEach((k, v) -> {
+                for (String hijo : v) {
+                    try {
+                        bw.write(k + "," + hijo );
+                        bw.newLine();
+                    } catch (IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            });
+
+            bw.close();
+            System.out.println("archivo creado");
+        } catch (Exception e) {
+            System.out.println("archivo no creado");
+        }
     }
 }
