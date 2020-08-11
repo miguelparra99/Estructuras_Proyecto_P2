@@ -349,6 +349,8 @@ public class ElegirArchivo extends VBox {
             }
             FileWriter fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
+             bw.write("parent,child");
+               bw.newLine();
             mapParentChild.forEach((k, v) -> {
                 for (String hijo : v) {
                     try {
