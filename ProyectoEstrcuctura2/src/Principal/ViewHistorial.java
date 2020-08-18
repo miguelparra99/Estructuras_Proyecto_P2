@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -18,6 +19,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -81,10 +83,22 @@ public class ViewHistorial extends VBox {
         BttnOtroArchivo.setOnAction(evente->{
         this.getChildren().clear();
         Llenar();
+        
+        
         }); 
         BttnCodificarPalabra.setOnAction(event->{
+        
+        if(TxtCodificarPalabra.toString()==null){
+            HBox message= new HBox();
+            Label msg= new Label("Ingrese una palabra");
+            message.getChildren().add(msg);
+            message.setAlignment(Pos.CENTER);
+            this.getChildren().add(message);
+        }else{
         ElegirArchivo Token=new ElegirArchivo("dda");
         General.setRight(new Label(Token.codificarArchivo((Hashtable<String, HuffmanInfo>) Hist.getMapaCodificar(),TxtCodificarPalabra.getText())));
+        }
+        
         });
         
 

@@ -6,11 +6,8 @@ package Principal;
 import Apoyo.Historial;
 import javafx.stage.Window;
 import javafx.stage.FileChooser;
-import javafx.event.ActionEvent;
-import java.io.Writer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -25,16 +22,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import static java.lang.Thread.sleep;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -70,6 +61,7 @@ public class ElegirArchivo extends VBox {
     private BinaryTree<HuffmanInfo> ArbolHuffman;
     private Hashtable<String, HuffmanInfo> mapOfAll;
     private Hashtable<String, ArrayList<String>> mapParentChild;
+    private Hashtable<String, HuffmanInfo> mapOfDecod;
     private BorderPane codifica;
     private ChoiceBox cb;
 
@@ -117,14 +109,27 @@ public class ElegirArchivo extends VBox {
             } else {
                 System.out.println("Elija un archivo txt");
             }
+            
         });
         BttnFrecuencia.setOnAction(event -> {
+           
+            if(txtPalabra.toString()==null){
+            HBox message= new HBox();
+            Label msg= new Label("Ingrese una palabra");
+            message.getChildren().add(msg);
+            message.setAlignment(Pos.CENTER);
+            this.getChildren().add(message);
+        }
+            else{
+                
             TablaFrecuencia = Frecuencias(ContenidoTxt(Ruta.getText()));
             getChildren().addAll(TablaFrecuencia, BttnCode);
             LlenarCola();
             LlenarArbol();
             mapOfAll = ArbolHuffman.CodificarArbolTodos(map);
             Ruta.setEditable(false);
+            
+            }
         });
         BttnCode.setOnAction(event -> {
             Label asunto = new Label("Ingrese la ruta donde guardara el .txt");
@@ -322,9 +327,21 @@ public class ElegirArchivo extends VBox {
         }
         return codificado;
     }
-
-    public String descodificarbits(String bits) {
+    
+    public String descodificarbits(Hashtable<String, HuffmanInfo> mapa,String bits) {
         String decodificado = "";
+        char[] array= bits.toCharArray();
+        
+        if(array[0]!=1){
+        Label error= new Label("Cadena no valida");
+        HBox message= new HBox();
+        message.getChildren().add(error);
+        message.setAlignment(Pos.CENTER);
+        }
+        else{
+            
+            
+        }
         return decodificado;
     }
 
