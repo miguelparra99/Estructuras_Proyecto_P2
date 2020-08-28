@@ -49,20 +49,22 @@ public class ElegirArchivo extends VBox {
     private Button BttnDecodificarPalabra;
     private Button BttnHistorial;
     private Button BttnVolverCargar;
-    private Hashtable<String, Historial> DictHistorial;
     private TextField Ruta;
     private TextField txtPalabra;
     private TextField txtBits;
     private TextField Ruta1;
     private GridPane TablaCodigos;
     private GridPane TablaFrecuencia;
-    private Hashtable<String, Integer> map;
     private PriorityQueue<BinaryTree<HuffmanInfo>> ColaPrioridad;
     private BinaryTree<HuffmanInfo> ArbolHuffman;
+    private Hashtable<String, Historial> DictHistorial;
     private Hashtable<String, HuffmanInfo> mapOfAll;
     private Hashtable<String, ArrayList<String>> mapParentChild;
+    private Hashtable<String, Integer> map;
     private Hashtable<String, HuffmanInfo> mapOfDecod;
     private BorderPane codifica;
+    private HBox derSuperior;
+    private HBox derInferior;
     private ChoiceBox cb;
 
     public ElegirArchivo() {
@@ -75,7 +77,8 @@ public class ElegirArchivo extends VBox {
     }
 
     public void Llenar() {
-
+        this.derSuperior=new HBox();
+        this.derInferior=new HBox();
         this.setAlignment(Pos.CENTER);
         this.BttnArchivo = new Button("Buscar Archivo");
         this.BttnFrecuencia = new Button("frecuencia");
@@ -109,31 +112,35 @@ public class ElegirArchivo extends VBox {
             } else {
                 System.out.println("Elija un archivo txt");
             }
-            
+
         });
         BttnFrecuencia.setOnAction(event -> {
-           
-            if(txtPalabra.toString()==null){
-            HBox message= new HBox();
-            Label msg= new Label("Ingrese una palabra");
-            message.getChildren().add(msg);
-            message.setAlignment(Pos.CENTER);
-            this.getChildren().add(message);
-        }
-            else{
+
+            if (txtPalabra.toString() == null) {
+                HBox message = new HBox();
+                Label msg = new Label("Ingrese una palabra");
+                message.getChildren().add(msg);
+                message.setAlignment(Pos.CENTER);
+                this.getChildren().add(message);
+            } else {
+
+                TablaFrecuencia = Frecuencias(ContenidoTxt(Ruta.getText()));
+                getChildren().addAll(TablaFrecuencia, BttnCode);
+                LlenarCola();
+                LlenarArbol();
+                mapOfAll = ArbolHuffman.CodificarArbolTodos(map);
+                mapOfDecod = ArbolHuffman.DeCodificarArbolTodos(mapOfAll);
+                Ruta.setEditable(false);
                 
-            TablaFrecuencia = Frecuencias(ContenidoTxt(Ruta.getText()));
-            getChildren().addAll(TablaFrecuencia, BttnCode);
-            LlenarCola();
-            LlenarArbol();
-            mapOfAll = ArbolHuffman.CodificarArbolTodos(map);
-            Ruta.setEditable(false);
-            
+
             }
         });
         BttnCode.setOnAction(event -> {
             Label asunto = new Label("Ingrese la ruta donde guardara el .txt");
             codifica = new BorderPane();
+            HBox nodo=new HBox();
+           nodo.getChildren().addAll(derSuperior,derInferior);
+            codifica.setRight(nodo);
             TablaCodigos = TablaCodigos();
             codifica.setLeft(TablaCodigos);
             VBox a = new VBox();
@@ -156,15 +163,17 @@ public class ElegirArchivo extends VBox {
             String source = Ruta.getText().replace('\\', '/');
             String[] Archivo = source.split("/");
             String source1 = Ruta1.getText().replace('\\', '/');
-            DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll, TablaFrecuencia, TablaCodigos));
+            DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll,mapOfDecod, TablaFrecuencia, TablaCodigos));
             System.out.println("agregado con exito");
         });
 
         BttnCodePalabra.setOnAction(event -> {
             Label derecha = new Label(codificarArchivo(mapOfAll, txtPalabra.getText()));
-            codifica.setRight(derecha);
+            derSuperior.getChildren().add(derecha);
         });
         BttnDecodificarPalabra.setOnAction(event -> {
+            Label izquierda = new Label(decodificarbits(mapOfDecod,txtBits.getText()));
+            derInferior.getChildren().add(izquierda);
         });
 
         BttnVolverCargar.setOnAction(event -> {
@@ -327,22 +336,24 @@ public class ElegirArchivo extends VBox {
         }
         return codificado;
     }
-    
-    public String descodificarbits(Hashtable<String, HuffmanInfo> mapa,String bits) {
-        String decodificado = "";
-        char[] array= bits.toCharArray();
-        
-        if(array[0]!=1){
-        Label error= new Label("Cadena no valida");
-        HBox message= new HBox();
-        message.getChildren().add(error);
-        message.setAlignment(Pos.CENTER);
+
+    public String decodificarbits(Hashtable<String, HuffmanInfo> mapa, String bits) {
+        String resultado="";
+        String bit ="";
+        for (int i = 1; i <= bits.length(); i++) {
+            if (Integer.parseInt(bits.substring((i - 1), i)) == 1) {
+                bit+=bits.substring((i - 1), i);
+                if(bit.length()==mapa.size()-1){
+                    resultado+=mapa.get(bit).getText();
+                    bit="";
+                }
+            }else{
+                bit+=bits.substring((i - 1), i);
+                resultado+=mapa.get(bit).getText();
+                bit="";
+            }
         }
-        else{
-            
-            
-        }
-        return decodificado;
+        return resultado;
     }
 
     public void escribirArchivoBinario(String ruta, String code) {
@@ -366,19 +377,18 @@ public class ElegirArchivo extends VBox {
             }
             FileWriter fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
-             bw.write("parent,child");
-               bw.newLine();
+            bw.write("parent,child");
+            bw.newLine();
             mapParentChild.forEach((k, v) -> {
                 for (String hijo : v) {
                     try {
-                        bw.write(k + "," + hijo );
+                        bw.write(k + "," + hijo);
                         bw.newLine();
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
             });
-
             bw.close();
             System.out.println("archivo creado");
         } catch (Exception e) {

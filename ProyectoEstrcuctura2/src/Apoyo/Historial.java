@@ -20,16 +20,18 @@ public class Historial {
     private String rutaDestino;
     private String manera;
     private Map<String, HuffmanInfo> mapaCodificar;
-    private Map<String, String> mapaDeCodificar;
+    private Map<String, HuffmanInfo> mapaDeCodificar;
     private GridPane ViewFrecuencia;
     private GridPane ViewCodificacion; 
-    public Historial(Date fehca, String rutaOrigen, String rutaDestino, String manera, Map<String, HuffmanInfo> mapaCodificar,GridPane ViewFrecuencia,GridPane ViewCodificacion) {
+    
+    
+    public Historial(Date fehca, String rutaOrigen, String rutaDestino, String manera, Map<String, HuffmanInfo> mapaCodificar,Map<String, HuffmanInfo> mapaDeCodificar,GridPane ViewFrecuencia,GridPane ViewCodificacion) {
         this.fehca = fehca;
         this.rutaOrigen = rutaOrigen;
         this.rutaDestino = rutaDestino;
         this.manera = manera;
         this.mapaCodificar = mapaCodificar;
-        this.mapaDeCodificar = null;
+        this.mapaDeCodificar = mapaDeCodificar;
         this.ViewCodificacion=ViewCodificacion;
         this.ViewFrecuencia=ViewFrecuencia;
     }
@@ -74,11 +76,11 @@ public class Historial {
         this.mapaCodificar = mapaCodificar;
     }
 
-    public Map<String, String> getMapaDeCodificar() {
+    public Map<String, HuffmanInfo> getMapaDeCodificar() {
         return mapaDeCodificar;
     }
 
-    public void setMapaDeCodificar(Map<String, String> mapaDeCodificar) {
+    public void setMapaDeCodificar(Map<String, HuffmanInfo> mapaDeCodificar) {
         this.mapaDeCodificar = mapaDeCodificar;
     }
 

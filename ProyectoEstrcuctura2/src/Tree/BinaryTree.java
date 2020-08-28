@@ -808,7 +808,6 @@ public class BinaryTree<T> {
     //EJ: meto caracter a, si exite en el arbol. me devolvera algo asi 110 en caso de que no exista me devuelve "" 
     public String CodificarArbol(BinaryTree<HuffmanInfo> arbol, String caracter) {
         String codificacion="";
-
         if (arbol.getLeft() != null && arbol.getLeft().getRoot().getContent().getText().indexOf(caracter) != -1) {
             codificacion="1"+CodificarArbol(arbol.getLeft(),caracter);
         }
@@ -830,4 +829,12 @@ public class BinaryTree<T> {
       });
         return mapacodificado;
     }
+        public Hashtable<String,HuffmanInfo> DeCodificarArbolTodos(Map<String,HuffmanInfo> mapofall) {
+        Hashtable<String,HuffmanInfo> mapadecodificado=new Hashtable<>();
+         mapofall.forEach((k,v) ->{
+          mapadecodificado.put(v.getBit(),v);
+      });
+        return mapadecodificado;
+    }
+    
 }

@@ -36,7 +36,7 @@ public class ViewHistorial extends VBox {
     private BorderPane General;
     private TextField TxtDeCodificarPalabra;
     private TextField TxtCodificarPalabra;
-    private  Historial Hist;
+    private Historial Hist;
 
     private ChoiceBox cb;
 
@@ -49,6 +49,9 @@ public class ViewHistorial extends VBox {
         TxtCodificarPalabra=new TextField();
         TxtDeCodificarPalabra=new TextField();
         General = new BorderPane();
+         VBox l=new VBox();
+            HBox derSuperior=new HBox();
+            HBox derInferior=new HBox();        
         BttnMostrarInfo = new Button("Mostrar Informacion");
         BttnCodificarPalabra = new Button("Codificar");
         BttnDecodificarBits = new Button("Decodificar");
@@ -61,12 +64,13 @@ public class ViewHistorial extends VBox {
             A.add(k);
         cb.getSelectionModel().select(k);
         });
-
-        
         cb.setItems(A);
         this.getChildren().addAll(Descripcion, cb,BttnMostrarInfo);
         BttnMostrarInfo.setOnAction(event -> {
             Hist=DictHistorial.get(cb.getSelectionModel().getSelectedItem().toString());
+           
+            l.getChildren().addAll(derSuperior,derInferior);
+            General.setRight(l);
             General.setLeft(Hist.getViewCodificacion());
             General.setTop(Hist.getViewFrecuencia());
             General.setBottom(BttnOtroArchivo);
@@ -96,11 +100,16 @@ public class ViewHistorial extends VBox {
             this.getChildren().add(message);
         }else{
         ElegirArchivo Token=new ElegirArchivo("dda");
-        General.setRight(new Label(Token.codificarArchivo((Hashtable<String, HuffmanInfo>) Hist.getMapaCodificar(),TxtCodificarPalabra.getText())));
+        derSuperior.getChildren().add(new Label(Token.codificarArchivo((Hashtable<String, HuffmanInfo>) Hist.getMapaCodificar(),TxtCodificarPalabra.getText())));
         }
+        });
+        BttnDecodificarBits.setOnAction(event->{
+        ElegirArchivo Token=new ElegirArchivo("dda");
+        derInferior.getChildren().add(new Label(Token.decodificarbits((Hashtable<String, HuffmanInfo>) Hist.getMapaDeCodificar(),TxtDeCodificarPalabra.getText())));
+        
+        
         
         });
         
-
     }
 }
