@@ -8,16 +8,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 
 public class ProyectoParcial2 extends Application
 {
     public void start(final Stage primaryStage) {
-        final ElegirArchivo Ventana = new ElegirArchivo();
-        final Scene scene = new Scene(Ventana, 600, 600);
+        ElegirArchivo Ventana = new ElegirArchivo();
+        Scene scene = new Scene(Ventana, 1000, 1000);
+        Ventana.setAlignment(Pos.CENTER);
         primaryStage.setTitle("Inicio");
         primaryStage.setScene(scene);
-        primaryStage.show();
-       
+        primaryStage.show();  
+        primaryStage.setFullScreen(true);
     }
     
     public static void main(final String[] args) {

@@ -26,18 +26,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class ElegirArchivo extends VBox {
 
@@ -66,6 +82,9 @@ public class ElegirArchivo extends VBox {
     private HBox derSuperior;
     private HBox derInferior;
     private ChoiceBox cb;
+    private ScrollPane sc;
+    private ScrollPane pn;
+    private Label acuse;
 
     public ElegirArchivo() {
         DictHistorial = new Hashtable<>();
@@ -77,8 +96,11 @@ public class ElegirArchivo extends VBox {
     }
 
     public void Llenar() {
-        this.derSuperior=new HBox();
-        this.derInferior=new HBox();
+
+        //pn.setHmax(3);
+        //this.getChildren().add(pn);
+        this.derSuperior = new HBox();
+        this.derInferior = new HBox();
         this.setAlignment(Pos.CENTER);
         this.BttnArchivo = new Button("Buscar Archivo");
         this.BttnFrecuencia = new Button("frecuencia");
@@ -97,6 +119,14 @@ public class ElegirArchivo extends VBox {
         this.txtPalabra = new TextField();
         this.Ruta = new TextField();
         this.Ruta1 = new TextField();
+        Ruta.setPrefSize(50,25);
+        Ruta.setMinWidth(500);
+        Ruta.setMaxWidth(600);
+        Ruta1.setPrefSize(50,25);
+        Ruta1.setMinWidth(500);
+        Ruta1.setMaxWidth(600);
+        Ruta.setAlignment(Pos.CENTER);
+        Ruta1.setAlignment(Pos.CENTER);
         this.txtBits = new TextField();
         this.Ruta.setEditable(false);
         this.getChildren().addAll(BttnArchivo, Ruta, cb, BttnFrecuencia);
@@ -110,14 +140,12 @@ public class ElegirArchivo extends VBox {
             File archivo = fileChooser.showOpenDialog(stage);
             if (archivo != null) {
                 this.Ruta.setText(archivo.getAbsolutePath());
-                System.out.println("Texto del archivo");
             } else {
-                System.out.println("Elija un archivo txt");
             }
 
         });
         BttnFrecuencia.setOnAction(event -> {
-
+            this.getChildren().clear();
             if (txtPalabra.toString() == null) {
                 HBox message = new HBox();
                 Label msg = new Label("Ingrese una palabra");
@@ -125,56 +153,112 @@ public class ElegirArchivo extends VBox {
                 message.setAlignment(Pos.CENTER);
                 this.getChildren().add(message);
             } else {
-
                 TablaFrecuencia = Frecuencias(ContenidoTxt(Ruta.getText()));
-                getChildren().addAll(TablaFrecuencia, BttnCode);
+                HBox frecu = new HBox();
+                frecu.setAlignment(Pos.CENTER);
+                Label m = new Label("Frecuencia:");
+                m.setFont(new Font(30.0));
+                frecu.setPadding(new Insets(15, 12, 15, 12));
+                frecu.setAlignment(Pos.CENTER);
+                frecu.getChildren().add(TablaFrecuencia);
+                pn = new ScrollPane();
+                pn.setStyle("-fx-background: rgb(255,255,255);\n -fx-background-color: rgb(255,255,255)");
+                pn.setFitToWidth(true);
+                pn.setContent(frecu);
+                pn.setPrefSize(100, 150);
+                pn.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                pn.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                getChildren().addAll(m, pn, BttnCode);
                 LlenarCola();
                 LlenarArbol();
                 mapOfAll = ArbolHuffman.CodificarArbolTodos(map);
                 mapOfDecod = ArbolHuffman.DeCodificarArbolTodos(mapOfAll);
                 Ruta.setEditable(false);
-                
-
             }
         });
         BttnCode.setOnAction(event -> {
+           
             Label asunto = new Label("Ingrese la ruta donde guardara el .txt");
+            asunto.setFont(new Font(25));
             codifica = new BorderPane();
-            HBox nodo=new HBox();
-           nodo.getChildren().addAll(derSuperior,derInferior);
+            HBox nodosup = new HBox();
+            VBox AYUDAa=new VBox();
+            VBox AYUDAb=new VBox();
+            nodosup.getChildren().add(derSuperior);
+            Label ma=new Label("Bits:");
+             ma.setFont(new Font(25));
+            AYUDAa.getChildren().addAll(ma,nodosup);
+            Label mb=new Label("Caracteres:");
+             mb.setFont(new Font(25));
+            HBox nodoinf = new HBox();
+            nodoinf.getChildren().add(derInferior);
+             AYUDAb.getChildren().addAll(mb,nodoinf);
+            VBox nodo = new VBox();
+            nodo.getChildren().addAll(AYUDAa, AYUDAb);
+            nodo.setAlignment(Pos.CENTER);
+            nodo.setMinSize(100,100);
+            nodo.setMinSize(200,100);
             codifica.setRight(nodo);
             TablaCodigos = TablaCodigos();
-            codifica.setLeft(TablaCodigos);
+            VBox w = new VBox();
+            sc = new ScrollPane();
+            w.getChildren().add(TablaCodigos);
+            //w.setPadding(new Insets(15, 12, 15, 12));
+            w.setAlignment(Pos.CENTER);
+            sc.setStyle("-fx-background: rgb(255,255,255);\n -fx-background-color: rgb(255,255,255)");
+            sc.setFitToWidth(true);
+            sc.setFitToHeight(true);
+            sc.setContent(w);
+            sc.setPrefSize(300, 400);
+            sc.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            sc.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            codifica.setLeft(sc);
             VBox a = new VBox();
             a.getChildren().addAll(new Label("Ingresa letras del dominio y codificala!"), BttnCodePalabra, txtPalabra, new Label("Ingrese los bits del dominio y decodificala"), BttnDecodificarPalabra, txtBits);
+            a.setMaxSize(400, 400);
+            a.setMinSize(400, 400);
+            a.setPadding(new Insets(15, 12, 15, 12));
+            a.setAlignment(Pos.CENTER);
             codifica.setCenter(a);
-            HBox b = new HBox();
+            VBox b = new VBox();
             b.setAlignment(Pos.CENTER);
-            b.getChildren().addAll(BttnHistorial, BttnCodificar, BttnVolverCargar);
+            acuse=new Label("...");
+            acuse.setFont(new Font(20));
+            b.getChildren().add(acuse);
+            HBox linea=new HBox();
+            linea.setAlignment(Pos.CENTER);
+            linea.getChildren().addAll(BttnHistorial, BttnCodificar, BttnVolverCargar);
+            b.getChildren().add(linea);
             getChildren().addAll(codifica, asunto, Ruta1, b);
             BttnCode.setVisible(false);
-        });
+            
 
-        BttnCodificar.setOnAction(event -> {
-            System.out.println("click");
+        });
+        BttnCodificar.setOnAction((ActionEvent event) -> {
             String RUTADESTINO = this.Ruta1.getText();
             String Bits = codificarArchivo(mapOfAll, ContenidoTxt(Ruta.getText()));
-            escribir(RUTADESTINO, Bits);
-            escribirArchivoBinario(RUTADESTINO, Bits);
-            escribirArchivoArbol(RUTADESTINO);
+            
+            acuse.setText("Descargado");
             String source = Ruta.getText().replace('\\', '/');
             String[] Archivo = source.split("/");
             String source1 = Ruta1.getText().replace('\\', '/');
-            DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll,mapOfDecod, TablaFrecuencia, TablaCodigos));
-            System.out.println("agregado con exito");
-        });
-
+            DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll, mapOfDecod, pn, sc));
+            escribir(RUTADESTINO, Bits,Archivo[Archivo.length - 1]);
+              escribirArchivoBinario(RUTADESTINO, Bits,Archivo[Archivo.length - 1]);
+            escribirArchivoArbol(RUTADESTINO,Archivo[Archivo.length - 1]);
+            Ruta1.setEditable(false);
+        }
+                );       
         BttnCodePalabra.setOnAction(event -> {
             Label derecha = new Label(codificarArchivo(mapOfAll, txtPalabra.getText()));
+             derecha.setFont(new Font(15.0));
+             derSuperior.getChildren().clear();
             derSuperior.getChildren().add(derecha);
         });
         BttnDecodificarPalabra.setOnAction(event -> {
-            Label izquierda = new Label(decodificarbits(mapOfDecod,txtBits.getText()));
+            Label izquierda = new Label(decodificarbits(mapOfDecod, txtBits.getText()));
+           izquierda.setFont(new Font(15.0));
+             derInferior.getChildren().clear();
             derInferior.getChildren().add(izquierda);
         });
 
@@ -183,32 +267,39 @@ public class ElegirArchivo extends VBox {
             Llenar();
         });
         BttnHistorial.setOnAction(event -> {
+            Stage stage = (Stage) BttnHistorial.getScene().getWindow();
+            stage.close();
             ViewHistorial Histo = new ViewHistorial(DictHistorial);
-
-            Scene scene = new Scene(Histo, 600, 600);
+            Scene scene = new Scene(Histo, 1000, 800);
             Stage ad = new Stage();
             ad.setScene(scene);
+            ad.setFullScreen(true);
             ad.show();
-
         });
     }
 
     //ESTE METODO ME LLENA UN GRINDPANE CON EL CARACTER Y SU BITS SEGUN EL ARBOL DE BITS GENERADO
     public GridPane TablaCodigos() {
         GridPane tabla = new GridPane();
+        tabla.setGridLinesVisible(true);
         tabla.setAlignment(Pos.CENTER);
-        mapOfAll.forEach((k, v) -> {
-            System.out.println("clave" + k + "contenido" + v.toString());
-        });
         int j = 0;
         for (String key : mapOfAll.keySet()) {
             Label clave2 = new Label(key);
             Label valor = new Label(mapOfAll.get(key).getBit());
+            clave2.setAlignment(Pos.CENTER);
+            valor.setAlignment(Pos.CENTER);
             tabla.add(clave2, 0, j);
             tabla.add(valor, 1, j);
+            clave2.setFont(new Font(15.0));
+            valor.setFont(new Font(15.0));
+            RowConstraints fila = new RowConstraints(20.0);
+
+            fila.setValignment(VPos.CENTER);
+            tabla.getRowConstraints().add(fila);
+
             ++j;
         }
-
         return tabla;
 
     }
@@ -217,16 +308,28 @@ public class ElegirArchivo extends VBox {
     public String ContenidoTxt(String ruta) {
         String texto = " ";
         String linea = " ";
+        FileReader fr =null;
+        BufferedReader br=null;
         try {
             File archivo = new File(ruta);
-            FileReader fr = new FileReader(archivo);
-            BufferedReader br = new BufferedReader(fr);
+             fr = new FileReader(archivo);
+             br = new BufferedReader(fr);
             while ((linea = br.readLine()) != null) {
                 texto = texto + linea + " ";
             }
             br.close();
             fr.close();
         } catch (Exception ex) {
+        }finally{
+              try {
+                    if (br != null) 
+                        br.close();
+                    if (fr != null) 
+                        fr.close();
+                    
+        }   catch (IOException ex) {
+                Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return texto;
     }
@@ -234,6 +337,8 @@ public class ElegirArchivo extends VBox {
 
     public GridPane Frecuencias(String texto) {
         GridPane tabla = new GridPane();
+        tabla.setGridLinesVisible(true);
+        tabla.setAlignment(Pos.CENTER);
         tabla.setMinSize(5, 5);
         map = new Hashtable<String, Integer>();
         char[] arrayTexto = texto.toCharArray();
@@ -252,29 +357,43 @@ public class ElegirArchivo extends VBox {
             Label valor = new Label(map.get(key).toString());
             tabla.add((Node) clave2, j, 0);
             tabla.add((Node) valor, j, 1);
-            ColumnConstraints column = new ColumnConstraints(20.0);
+            valor.setFont(new Font(30.0));
+            clave2.setFont(new Font(30.0));
+            ColumnConstraints column = new ColumnConstraints(40.0);
+            column.setHalignment(HPos.CENTER);
             tabla.getColumnConstraints().add(column);
             ++j;
         }
-
         return tabla;
     }
 
     //ESTE METODO ME GENERA UN ARCHIVO DE TEXTO(BITS) Y LOS GUARDA DONDE LA PERSONA DESEA   
     //  RECIBE LA RUTA DONDE SE GUARDARA EL ARCHIVO Y EL CONTENIDO QUE TENDRA ESTE
-    public void escribir(String ruta, String contenido) {
+    public void escribir(String ruta, String contenido,String nombre) {
+         FileWriter fw=null;
+         BufferedWriter bw =null;
         try {
-            File file = new File(ruta + "/Codificado.txt");
+            File file = new File(ruta + "/Codificado"+nombre +".txt");
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
+             fw = new FileWriter(file);
+             bw = new BufferedWriter(fw);
             bw.write(contenido);
             bw.close();
             System.out.println("archivo creado");
         } catch (Exception e) {
             System.out.println("archivo no creado");
+        }finally{
+              try {
+                    if (bw != null) 
+                        bw.close();
+                    if (fw != null) 
+                        fw.close();
+        }   catch (IOException ex) {
+                Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
     }
     //METODO DE APOYO QUE RECORRE EL MAPA DE FRECUENCIAS PARA UTILIZARLOS COMO NODOS EN UN BINARY TREE 
@@ -340,45 +459,57 @@ public class ElegirArchivo extends VBox {
     }
 
     public String decodificarbits(Hashtable<String, HuffmanInfo> mapa, String bits) {
-        String resultado="";
-        String bit ="";
+        String resultado = "";
+        String bit = "";
         for (int i = 1; i <= bits.length(); i++) {
             if (Integer.parseInt(bits.substring((i - 1), i)) == 1) {
-                bit+=bits.substring((i - 1), i);
-                if(bit.length()==mapa.size()-1){
-                    resultado+=mapa.get(bit).getText();
-                    bit="";
+                bit += bits.substring((i - 1), i);
+                if (bit.length() == mapa.size() - 1) {
+                    resultado += mapa.get(bit).getText();
+                    bit = "";
                 }
-            }else{
-                bit+=bits.substring((i - 1), i);
-                resultado+=mapa.get(bit).getText();
-                bit="";
+            } else {
+                bit += bits.substring((i - 1), i);
+                resultado += mapa.get(bit).getText();
+                bit = "";
             }
         }
         return resultado;
     }
 
-    public void escribirArchivoBinario(String ruta, String code) {
+    public void escribirArchivoBinario(String ruta, String code,String nombre) {
+        OutputStream ar=null;
+        DataOutputStream b=null;
         try {
-            File file = new File(ruta + "/CodificadoBianrio1.dat");
-            OutputStream ar = new FileOutputStream(file);
-            DataOutputStream b = new DataOutputStream(ar);
+            File file = new File(ruta + "/CodificadoBianrio1"+nombre+".dat");
+             ar = new FileOutputStream(file);
+             b = new DataOutputStream(ar);
             b.write(code.getBytes());
         } catch (FileNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+        }finally{
+             try {
+                    if (b != null) 
+                        b.close();
+                    if (ar != null) 
+                        ar.close();
+        }   catch (IOException ex) {
+                Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
-    public void escribirArchivoArbol(String ruta) {
+    public void escribirArchivoArbol(String ruta,String nombre) {
+        
         try {
-            File file = new File(ruta + "/Arbol.tree");
+            File file = new File(ruta + "/Arbol"+nombre+".tree");
             if (!file.exists()) {
                 file.createNewFile();
             }
             FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);
+            BufferedWriter  bw = new BufferedWriter(fw);
             bw.write("parent,child");
             bw.newLine();
             mapParentChild.forEach((k, v) -> {
@@ -391,8 +522,7 @@ public class ElegirArchivo extends VBox {
                     }
                 }
             });
-            bw.close();
-            System.out.println("archivo creado");
+            
         } catch (Exception e) {
             System.out.println("archivo no creado");
         }

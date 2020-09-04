@@ -7,6 +7,7 @@ package Apoyo;
 
 import java.util.Date;
 import java.util.Map;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -21,11 +22,11 @@ public class Historial {
     private String manera;
     private Map<String, HuffmanInfo> mapaCodificar;
     private Map<String, HuffmanInfo> mapaDeCodificar;
-    private GridPane ViewFrecuencia;
-    private GridPane ViewCodificacion; 
+    private ScrollPane ViewFrecuencia;
+    private ScrollPane ViewCodificacion; 
     
     
-    public Historial(Date fehca, String rutaOrigen, String rutaDestino, String manera, Map<String, HuffmanInfo> mapaCodificar,Map<String, HuffmanInfo> mapaDeCodificar,GridPane ViewFrecuencia,GridPane ViewCodificacion) {
+    public Historial(Date fehca, String rutaOrigen, String rutaDestino, String manera, Map<String, HuffmanInfo> mapaCodificar,Map<String, HuffmanInfo> mapaDeCodificar,ScrollPane ViewFrecuencia,ScrollPane ViewCodificacion) {
         this.fehca = fehca;
         this.rutaOrigen = rutaOrigen;
         this.rutaDestino = rutaDestino;
@@ -84,19 +85,19 @@ public class Historial {
         this.mapaDeCodificar = mapaDeCodificar;
     }
 
-    public GridPane getViewFrecuencia() {
+    public ScrollPane getViewFrecuencia() {
         return ViewFrecuencia;
     }
 
-    public void setViewFrecuencia(GridPane ViewFrecuencia) {
+    public void setViewFrecuencia(ScrollPane ViewFrecuencia) {
         this.ViewFrecuencia = ViewFrecuencia;
     }
 
-    public GridPane getViewCodificacion() {
+    public ScrollPane getViewCodificacion() {
         return ViewCodificacion;
     }
 
-    public void setViewCodificacion(GridPane ViewCodificacion) {
+    public void setViewCodificacion(ScrollPane ViewCodificacion) {
         this.ViewCodificacion = ViewCodificacion;
     }
 
