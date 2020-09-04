@@ -17,6 +17,7 @@ public class ProyectoParcial2 extends Application
         primaryStage.setTitle("Inicio");
         primaryStage.setScene(scene);
         primaryStage.show();
+       
     }
     
     public static void main(final String[] args) {

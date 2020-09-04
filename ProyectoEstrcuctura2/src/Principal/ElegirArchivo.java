@@ -100,6 +100,8 @@ public class ElegirArchivo extends VBox {
         this.txtBits = new TextField();
         this.Ruta.setEditable(false);
         this.getChildren().addAll(BttnArchivo, Ruta, cb, BttnFrecuencia);
+        this.setAlignment(Pos.CENTER);
+        this.setStyle("-fx-background-color: #ffffff;");
         this.BttnArchivo.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Buscar archivo Txt");

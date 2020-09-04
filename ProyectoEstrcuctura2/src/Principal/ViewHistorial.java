@@ -83,6 +83,8 @@ public class ViewHistorial extends VBox {
             Label Fecha = new Label("La hora de guardado es : "+Hist.getFehca());
             
             this.getChildren().addAll(RutaOrigen,RutaDestino,Manera,Fecha,General);
+            this.setAlignment(Pos.CENTER);
+            this.setStyle("-fx-background-color: #ffffff;");
         });
         BttnOtroArchivo.setOnAction(evente->{
         this.getChildren().clear();
