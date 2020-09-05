@@ -119,10 +119,10 @@ public class ElegirArchivo extends VBox {
         this.txtPalabra = new TextField();
         this.Ruta = new TextField();
         this.Ruta1 = new TextField();
-        Ruta.setPrefSize(50,25);
+        Ruta.setPrefSize(50, 25);
         Ruta.setMinWidth(500);
         Ruta.setMaxWidth(600);
-        Ruta1.setPrefSize(50,25);
+        Ruta1.setPrefSize(50, 25);
         Ruta1.setMinWidth(500);
         Ruta1.setMaxWidth(600);
         Ruta.setAlignment(Pos.CENTER);
@@ -177,27 +177,27 @@ public class ElegirArchivo extends VBox {
             }
         });
         BttnCode.setOnAction(event -> {
-           
+
             Label asunto = new Label("Ingrese la ruta donde guardara el .txt");
             asunto.setFont(new Font(25));
             codifica = new BorderPane();
             HBox nodosup = new HBox();
-            VBox AYUDAa=new VBox();
-            VBox AYUDAb=new VBox();
+            VBox AYUDAa = new VBox();
+            VBox AYUDAb = new VBox();
             nodosup.getChildren().add(derSuperior);
-            Label ma=new Label("Bits:");
-             ma.setFont(new Font(25));
-            AYUDAa.getChildren().addAll(ma,nodosup);
-            Label mb=new Label("Caracteres:");
-             mb.setFont(new Font(25));
+            Label ma = new Label("Bits:");
+            ma.setFont(new Font(25));
+            AYUDAa.getChildren().addAll(ma, nodosup);
+            Label mb = new Label("Caracteres:");
+            mb.setFont(new Font(25));
             HBox nodoinf = new HBox();
             nodoinf.getChildren().add(derInferior);
-             AYUDAb.getChildren().addAll(mb,nodoinf);
+            AYUDAb.getChildren().addAll(mb, nodoinf);
             VBox nodo = new VBox();
             nodo.getChildren().addAll(AYUDAa, AYUDAb);
             nodo.setAlignment(Pos.CENTER);
-            nodo.setMinSize(100,100);
-            nodo.setMinSize(200,100);
+            nodo.setMinSize(100, 100);
+            nodo.setMinSize(200, 100);
             codifica.setRight(nodo);
             TablaCodigos = TablaCodigos();
             VBox w = new VBox();
@@ -222,43 +222,43 @@ public class ElegirArchivo extends VBox {
             codifica.setCenter(a);
             VBox b = new VBox();
             b.setAlignment(Pos.CENTER);
-            acuse=new Label("...");
+            acuse = new Label("...");
             acuse.setFont(new Font(20));
             b.getChildren().add(acuse);
-            HBox linea=new HBox();
+            HBox linea = new HBox();
             linea.setAlignment(Pos.CENTER);
             linea.getChildren().addAll(BttnHistorial, BttnCodificar, BttnVolverCargar);
             b.getChildren().add(linea);
             getChildren().addAll(codifica, asunto, Ruta1, b);
             BttnCode.setVisible(false);
-            
-
         });
         BttnCodificar.setOnAction((ActionEvent event) -> {
             String RUTADESTINO = this.Ruta1.getText();
             String Bits = codificarArchivo(mapOfAll, ContenidoTxt(Ruta.getText()));
-            
+
             acuse.setText("Descargado");
             String source = Ruta.getText().replace('\\', '/');
             String[] Archivo = source.split("/");
             String source1 = Ruta1.getText().replace('\\', '/');
             DictHistorial.put(Archivo[Archivo.length - 1], new Historial(new Date(), source, source1, cb.getSelectionModel().getSelectedItem().toString(), mapOfAll, mapOfDecod, pn, sc));
-            escribir(RUTADESTINO, Bits,Archivo[Archivo.length - 1]);
-              escribirArchivoBinario(RUTADESTINO, Bits,Archivo[Archivo.length - 1]);
-            escribirArchivoArbol(RUTADESTINO,Archivo[Archivo.length - 1]);
+            String valor = Archivo[Archivo.length - 1];
+            String[] split = valor.split("\\.");
+            escribir(RUTADESTINO, Bits,split[0]);
+            escribirArchivoBinario(RUTADESTINO, Bits,split[0]);
+            escribirArchivoArbol(RUTADESTINO, split[0]);
             Ruta1.setEditable(false);
         }
-                );       
+        );
         BttnCodePalabra.setOnAction(event -> {
             Label derecha = new Label(codificarArchivo(mapOfAll, txtPalabra.getText()));
-             derecha.setFont(new Font(15.0));
-             derSuperior.getChildren().clear();
+            derecha.setFont(new Font(15.0));
+            derSuperior.getChildren().clear();
             derSuperior.getChildren().add(derecha);
         });
         BttnDecodificarPalabra.setOnAction(event -> {
             Label izquierda = new Label(decodificarbits(mapOfDecod, txtBits.getText()));
-           izquierda.setFont(new Font(15.0));
-             derInferior.getChildren().clear();
+            izquierda.setFont(new Font(15.0));
+            derInferior.getChildren().clear();
             derInferior.getChildren().add(izquierda);
         });
 
@@ -308,26 +308,28 @@ public class ElegirArchivo extends VBox {
     public String ContenidoTxt(String ruta) {
         String texto = " ";
         String linea = " ";
-        FileReader fr =null;
-        BufferedReader br=null;
+        FileReader fr = null;
+        BufferedReader br = null;
         try {
             File archivo = new File(ruta);
-             fr = new FileReader(archivo);
-             br = new BufferedReader(fr);
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
             while ((linea = br.readLine()) != null) {
                 texto = texto + linea + " ";
             }
             br.close();
             fr.close();
         } catch (Exception ex) {
-        }finally{
-              try {
-                    if (br != null) 
-                        br.close();
-                    if (fr != null) 
-                        fr.close();
-                    
-        }   catch (IOException ex) {
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+                if (fr != null) {
+                    fr.close();
+                }
+
+            } catch (IOException ex) {
                 Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -369,31 +371,33 @@ public class ElegirArchivo extends VBox {
 
     //ESTE METODO ME GENERA UN ARCHIVO DE TEXTO(BITS) Y LOS GUARDA DONDE LA PERSONA DESEA   
     //  RECIBE LA RUTA DONDE SE GUARDARA EL ARCHIVO Y EL CONTENIDO QUE TENDRA ESTE
-    public void escribir(String ruta, String contenido,String nombre) {
-         FileWriter fw=null;
-         BufferedWriter bw =null;
+    public void escribir(String ruta, String contenido, String nombre) {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
         try {
-            File file = new File(ruta + "/Codificado"+nombre +".txt");
+            File file = new File(ruta + "/Codificado" + nombre + ".txt");
             if (!file.exists()) {
                 file.createNewFile();
             }
-             fw = new FileWriter(file);
-             bw = new BufferedWriter(fw);
+            fw = new FileWriter(file);
+            bw = new BufferedWriter(fw);
             bw.write(contenido);
             bw.close();
             System.out.println("archivo creado");
         } catch (Exception e) {
             System.out.println("archivo no creado");
-        }finally{
-              try {
-                    if (bw != null) 
-                        bw.close();
-                    if (fw != null) 
-                        fw.close();
-        }   catch (IOException ex) {
+        } finally {
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+                if (fw != null) {
+                    fw.close();
+                }
+            } catch (IOException ex) {
                 Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         }
     }
     //METODO DE APOYO QUE RECORRE EL MAPA DE FRECUENCIAS PARA UTILIZARLOS COMO NODOS EN UN BINARY TREE 
@@ -477,54 +481,58 @@ public class ElegirArchivo extends VBox {
         return resultado;
     }
 
-    public void escribirArchivoBinario(String ruta, String code,String nombre) {
-        OutputStream ar=null;
-        DataOutputStream b=null;
+    public void escribirArchivoBinario(String ruta, String code, String nombre) {
+        OutputStream ar = null;
+        DataOutputStream b = null;
         try {
-            File file = new File(ruta + "/CodificadoBianrio1"+nombre+".dat");
-             ar = new FileOutputStream(file);
-             b = new DataOutputStream(ar);
+            File file = new File(ruta + "/CodificadoBianrio1" + nombre + ".dat");
+            ar = new FileOutputStream(file);
+            b = new DataOutputStream(ar);
             b.write(code.getBytes());
         } catch (FileNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
-        }finally{
-             try {
-                    if (b != null) 
-                        b.close();
-                    if (ar != null) 
-                        ar.close();
-        }   catch (IOException ex) {
+        } finally {
+            try {
+                if (b != null) {
+                    b.close();
+                }
+                if (ar != null) {
+                    ar.close();
+                }
+            } catch (IOException ex) {
                 Logger.getLogger(ElegirArchivo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    public void escribirArchivoArbol(String ruta,String nombre) {
-        
+    public void escribirArchivoArbol(String ruta, String nombre) {
         try {
-            File file = new File(ruta + "/Arbol"+nombre+".tree");
+            File file = new File(ruta + "/Arbol" + nombre + ".tree");
             if (!file.exists()) {
                 file.createNewFile();
             }
             FileWriter fw = new FileWriter(file);
-            BufferedWriter  bw = new BufferedWriter(fw);
+            BufferedWriter bw = new BufferedWriter(fw);
             bw.write("parent,child");
             bw.newLine();
             mapParentChild.forEach((k, v) -> {
                 for (String hijo : v) {
                     try {
                         bw.write(k + "," + hijo);
+
                         bw.newLine();
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
                     }
                 }
             });
-            
+            bw.close();
+            fw.close();
         } catch (Exception e) {
             System.out.println("archivo no creado");
         }
     }
+
 }
